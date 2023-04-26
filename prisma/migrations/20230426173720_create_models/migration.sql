@@ -11,6 +11,7 @@ CREATE TABLE `user` (
 -- CreateTable
 CREATE TABLE `playlist` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
     `userId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
