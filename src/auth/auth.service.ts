@@ -7,6 +7,7 @@ import {
 import { UserService } from 'src/users/users.service';
 import * as crypto from 'crypto';
 import { JwtService } from '@nestjs/jwt';
+import { ERROR_EMAIL_PASSWORD_WRONG } from 'src/errors/messages';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,7 @@ export class AuthService {
     const user = await this.userService.findOneByEmail(email);
 
     if (!this.comparePasswordHash(password, user?.password)) {
-      throw new UnauthorizedException('Email or password wrong');
+      throw new UnauthorizedException(ERROR_EMAIL_PASSWORD_WRONG);
     }
 
     const payload = { email, id: user.id };

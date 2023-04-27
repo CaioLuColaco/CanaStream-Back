@@ -9,6 +9,7 @@ import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { AllowUnauthorizedRequest } from './auth.decorator';
 import { PATH_AUTH } from 'src/routes';
+import { ERROR_MISSING_FIELDS } from 'src/errors/messages';
 
 export interface LoginDTO {
   email: string;
@@ -28,7 +29,7 @@ export class AuthController {
     const { email, password } = loginDTO;
 
     if (!email || !password) {
-      throw new BadRequestException('Missing login fields');
+      throw new BadRequestException(ERROR_MISSING_FIELDS);
     }
 
     const token = await this.authService.login(email, password);
