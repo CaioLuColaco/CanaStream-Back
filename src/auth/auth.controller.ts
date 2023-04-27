@@ -7,17 +7,20 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
+import { AllowUnauthorizedRequest } from './auth.decorator';
+import { PATH_AUTH } from 'src/routes';
 
 export interface LoginDTO {
   email: string;
   password: string;
 }
 
-@Controller('auth')
+@Controller(PATH_AUTH)
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @AllowUnauthorizedRequest()
   async login(
     @Body() loginDTO: LoginDTO,
     @Res({ passthrough: true }) res: Response,

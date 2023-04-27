@@ -4,14 +4,26 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { STRING_ALLOW_UNAUTHORIZED_REQUESTS } from 'src/utils/constants';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private readonly reflector: Reflector,
+    private jwtService: JwtService,
+  ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
+    const authorized = this.reflector.get<boolean>(
+      STRING_ALLOW_UNAUTHORIZED_REQUESTS,
+      ctx.getHandler(),
+    );
+    if (authorized) {
+      return true;
+    }
     const request = ctx.switchToHttp().getRequest();
     const token = this.extractTokenFromCookie(request);
     console.log({ token });
