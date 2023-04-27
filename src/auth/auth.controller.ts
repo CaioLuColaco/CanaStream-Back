@@ -32,4 +32,9 @@ export class AuthController {
 
     res.cookie('token', token, { httpOnly: true });
   }
+
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) req: Response) {
+    req.clearCookie('token');
+  }
 }

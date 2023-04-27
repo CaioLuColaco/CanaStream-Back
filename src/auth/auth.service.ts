@@ -1,11 +1,17 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  UnauthorizedException,
+  forwardRef,
+} from '@nestjs/common';
 import { UserService } from 'src/users/users.service';
-import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
@@ -13,9 +19,7 @@ export class AuthService {
   async login(email: string, password: string): Promise<any> {
     const user = await this.userService.findOneByEmail(email);
 
-    console.log(process.env.JWT_SECRET);
-
-    if (!bcrypt.compareSync(password, user?.password)) {
+    if (!this.comparePasswordHash(password, user?.password)) {
       throw new UnauthorizedException('Email or password wrong');
     }
 
@@ -23,5 +27,13 @@ export class AuthService {
     const token = await this.jwtService.signAsync(payload);
 
     return token;
+  }
+
+  generateHash(password: string): string {
+    return crypto.createHash('sha512').update(password).digest('base64');
+  }
+
+  comparePasswordHash(password: string, hash: string): boolean {
+    return this.generateHash(password) === hash;
   }
 }

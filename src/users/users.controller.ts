@@ -4,8 +4,6 @@ import {
   ConflictException,
   Controller,
   Post,
-  Req,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import { PATH_USERS } from 'src/routes';
@@ -18,10 +16,8 @@ import {
 } from 'src/errors/messages';
 import { UserService } from './users.service';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Response } from 'express';
 
 @Controller(PATH_USERS)
-@UseGuards(AuthGuard)
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -46,10 +42,5 @@ export class UserController {
     const newUser: User = await this.userService.create(body);
 
     return newUser;
-  }
-
-  @Post('logout')
-  async logout(@Res({ passthrough: true }) req: Response) {
-    req.clearCookie('token');
   }
 }

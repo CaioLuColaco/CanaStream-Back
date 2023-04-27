@@ -1,20 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDTO } from './dtos';
 import { User } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
-import { DEFAULT_HASH_ROUNDS } from 'src/utils/constants';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @Inject(forwardRef(() => AuthService))
+    private authService: AuthService,
+    private prisma: PrismaService,
+  ) {}
 
   async create(data: CreateUserDTO): Promise<User> {
     const { email, password } = data;
 
     try {
-      const hash: string = bcrypt.hashSync(password, DEFAULT_HASH_ROUNDS);
-
+      const hash: string = this.authService.generateHash(password);
       const user = await this.prisma.user.create({
         data: { email, password: hash },
       });
