@@ -2,7 +2,9 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { MusicsService } from './musics.service';
@@ -28,5 +30,10 @@ export class MusicsController {
     const newMusic: Music = await this.musicsService.create(body);
 
     return newMusic;
+  }
+
+  @Get()
+  async getAll(@Query() params: any): Promise<Music[]> {
+    return this.musicsService.findAll(params);
   }
 }

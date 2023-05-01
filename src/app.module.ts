@@ -6,6 +6,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { MusicsModule } from './musics/musics.module';
 import { ArtistsModule } from './artists/artists.module';
+import { PlaylistsModule } from './playlists/playlists.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ArtistsModule } from './artists/artists.module';
     UsersModule,
     MusicsModule,
     ArtistsModule,
+    PlaylistsModule,
   ],
   providers: [
     {

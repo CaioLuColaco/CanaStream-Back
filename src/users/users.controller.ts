@@ -19,10 +19,14 @@ import {
 import { UserService } from './users.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AllowUnauthorizedRequest } from 'src/auth/auth.decorator';
+import { PlaylistsService } from 'src/playlists/playlists.service';
 @UseGuards(AuthGuard)
 @Controller(PATH_USERS)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly playlistService: PlaylistsService,
+  ) {}
 
   @Post()
   @AllowUnauthorizedRequest()
@@ -46,5 +50,10 @@ export class UserController {
     const newUser: User = await this.userService.create(body);
 
     return newUser;
+  }
+
+  @Get(':id/playlists')
+  async getPlaylistsByUserId(@Param('id') id: string): Promise<Playlist[]> {
+    return this.playlistService.findAll({ userId: Number(id) });
   }
 }
