@@ -3,12 +3,14 @@ import {
   Body,
   ConflictException,
   Controller,
+  Get,
+  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { PATH_USERS } from 'src/routes';
 import { CreateUserDTO } from './dtos';
-import { User } from '@prisma/client';
+import { Playlist, User } from '@prisma/client';
 import {
   ERROR_EMAIL_IN_USE,
   ERROR_MISSING_FIELDS,
@@ -20,14 +22,14 @@ import { AllowUnauthorizedRequest } from 'src/auth/auth.decorator';
 @UseGuards(AuthGuard)
 @Controller(PATH_USERS)
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   @AllowUnauthorizedRequest()
   async create(@Body() body: CreateUserDTO): Promise<User> {
-    const { email, password, passwordConfirmation } = body;
+    const { email, password, passwordConfirmation, username } = body;
 
-    if (!email || !password || !passwordConfirmation) {
+    if (!email || !username || !password || !passwordConfirmation) {
       throw new BadRequestException(ERROR_MISSING_FIELDS);
     }
 

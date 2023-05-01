@@ -2,7 +2,8 @@
 CREATE TABLE `user` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
-    `password` VARCHAR(191) NULL,
+    `username` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `user_email_key`(`email`),
     PRIMARY KEY (`id`)
