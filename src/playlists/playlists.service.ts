@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreatePlaylistDTO } from './dtos';
-import { Playlist, User } from '@prisma/client';
+import { Playlist } from '@prisma/client';
+import { playlistSelect } from 'src/utils/default-entities-select';
 
 @Injectable()
 export class PlaylistsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreatePlaylistDTO, user: User): Promise<Playlist> {
+  async create(data: CreatePlaylistDTO, userId: number): Promise<Playlist> {
     const { name } = data;
 
     try {
@@ -19,7 +20,7 @@ export class PlaylistsService {
       const playlist = await this.prisma.playlist.create({
         data: {
           name,
-          userId: user.id,
+          userId,
           musics,
         },
         include: { musics: true },
@@ -36,13 +37,7 @@ export class PlaylistsService {
     console.log({ params });
     return this.prisma.playlist.findMany({
       where: params,
-      select: {
-        name: true,
-        musics: {
-          select: { name: true, url: true, artist: { select: { name: true } } },
-        },
-        user: { select: { password: false, username: true } },
-      },
+      select: playlistSelect,
     }) as unknown as Playlist[];
   }
 }

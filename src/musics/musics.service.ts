@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateMusicDTO } from './dtos';
 import { Music } from '@prisma/client';
+import { musicSelect } from 'src/utils/default-entities-select';
 
 @Injectable()
 export class MusicsService {
@@ -21,7 +22,7 @@ export class MusicsService {
     if (artistId) where['artistId'] = Number(artistId);
     return this.prisma.music.findMany({
       where,
-      include: { artist: true },
+      select: musicSelect,
     }) as unknown as Music[];
   }
 }

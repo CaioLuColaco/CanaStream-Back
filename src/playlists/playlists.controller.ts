@@ -28,7 +28,7 @@ export class PlaylistsController {
       throw new BadRequestException(ERROR_MISSING_FIELDS);
     }
 
-    const newPlaylist = await this.playlistsService.create(body, user);
+    const newPlaylist = await this.playlistsService.create(body, user.id);
 
     return newPlaylist;
   }
