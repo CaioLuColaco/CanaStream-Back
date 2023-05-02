@@ -9,7 +9,7 @@ export class PlaylistsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreatePlaylistDTO, userId: number): Promise<Playlist> {
-    const { name } = data;
+    const { name, imgUrl } = data;
 
     try {
       const musics =
@@ -22,6 +22,7 @@ export class PlaylistsService {
           name,
           userId,
           musics,
+          imgUrl,
         },
         include: { musics: true },
       });

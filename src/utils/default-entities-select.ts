@@ -19,6 +19,7 @@ export const musicSelect = {
 export const playlistSelect = {
   id: true,
   name: true,
+  imgUrl: true,
   user: { select: userSelect },
   musics: { select: musicSelect },
 };
