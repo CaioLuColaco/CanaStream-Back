@@ -36,6 +36,7 @@ export class AuthController {
 
     res.cookie('token', token, { httpOnly: true });
     res.statusCode = 200;
+    res.send({ token });
   }
 
   @Post('logout')
