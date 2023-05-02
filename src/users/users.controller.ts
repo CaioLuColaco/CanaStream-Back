@@ -3,13 +3,16 @@ import {
   Body,
   ConflictException,
   Controller,
+  ForbiddenException,
   Get,
   Param,
   Post,
+  Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { PATH_USERS } from 'src/routes';
-import { CreateUserDTO } from './dtos';
+import { CreateUserDTO, UpdateUserDTO } from './dtos';
 import { Playlist, User } from '@prisma/client';
 import {
   ERROR_EMAIL_IN_USE,
@@ -55,5 +58,35 @@ export class UserController {
   @Get(':id/playlists')
   async getPlaylistsByUserId(@Param('id') id: string): Promise<Playlist[]> {
     return this.playlistService.findAll({ userId: Number(id) });
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() body: UpdateUserDTO,
+    @Req() { user },
+  ): Promise<User> {
+    if (Number(id) !== user.id) {
+      throw new ForbiddenException();
+    }
+
+    if (Object.keys(body).length === 0) {
+      throw new BadRequestException();
+    }
+
+    if (body.newPassword && !body.currentPassword) {
+      throw new BadRequestException('must provide the current password');
+    }
+
+    if (body.email) {
+      const emailInUse = await this.userService.findOneByEmail(body.email);
+      if (emailInUse) {
+        throw new BadRequestException(ERROR_EMAIL_IN_USE);
+      }
+    }
+
+    const updatedUser: User = await this.userService.update(Number(id), body);
+
+    return updatedUser;
   }
 }

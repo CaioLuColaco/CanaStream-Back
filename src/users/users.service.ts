@@ -1,8 +1,14 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateUserDTO } from './dtos';
+import { CreateUserDTO, UpdateUserDTO } from './dtos';
 import { User } from '@prisma/client';
 import { AuthService } from 'src/auth/auth.service';
+import { userSelect } from 'src/utils/default-entities-select';
 
 @Injectable()
 export class UserService {
@@ -19,6 +25,7 @@ export class UserService {
       const hash: string = this.authService.generateHash(password);
       const user = await this.prisma.user.create({
         data: { email, password: hash, username },
+        select: userSelect,
       });
 
       return user;
@@ -28,6 +35,32 @@ export class UserService {
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    return this.prisma.user.findUnique({ where: { email } });
+    return this.prisma.user.findUnique({
+      where: { email },
+      select: userSelect,
+    });
+  }
+
+  async update(id: number, data: UpdateUserDTO): Promise<User> {
+    const { username, email, newPassword, currentPassword } = data;
+    const updatedData = { username, email };
+
+    if (newPassword) {
+      const user = await this.prisma.user.findFirst({ where: { id } });
+      const passwordIsCorrect = this.authService.comparePasswordHash(
+        currentPassword,
+        user.password,
+      );
+      if (!passwordIsCorrect) {
+        throw new ForbiddenException('Wrong password');
+      }
+      updatedData['password'] = this.authService.generateHash(newPassword);
+    }
+
+    return this.prisma.user.update({
+      where: { id },
+      data: updatedData,
+      select: userSelect,
+    });
   }
 }

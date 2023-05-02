@@ -4,3 +4,10 @@ export interface CreateUserDTO {
   password: string;
   passwordConfirmation: string;
 }
+
+export interface UpdateUserDTO {
+  email?: string;
+  username?: string;
+  newPassword?: string;
+  currentPassword?: string;
+}
