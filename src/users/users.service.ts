@@ -9,6 +9,7 @@ import { CreateUserDTO, UpdateUserDTO } from './dtos';
 import { User } from '@prisma/client';
 import { AuthService } from 'src/auth/auth.service';
 import { userSelect } from 'src/utils/default-entities-select';
+import { ERROR_MUST_PROVIDE_CURRENT_PASSWORD } from 'src/errors/messages';
 
 @Injectable()
 export class UserService {
@@ -52,7 +53,7 @@ export class UserService {
         user.password,
       );
       if (!passwordIsCorrect) {
-        throw new ForbiddenException('Wrong password');
+        throw new ForbiddenException(ERROR_MUST_PROVIDE_CURRENT_PASSWORD);
       }
       updatedData['password'] = this.authService.generateHash(newPassword);
     }

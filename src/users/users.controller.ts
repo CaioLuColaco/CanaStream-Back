@@ -17,6 +17,7 @@ import { Playlist, User } from '@prisma/client';
 import {
   ERROR_EMAIL_IN_USE,
   ERROR_MISSING_FIELDS,
+  ERROR_MUST_PROVIDE_CURRENT_PASSWORD,
   ERROR_PASSWORDS_DONT_MATCH,
 } from 'src/errors/messages';
 import { UserService } from './users.service';
@@ -75,7 +76,7 @@ export class UserController {
     }
 
     if (body.newPassword && !body.currentPassword) {
-      throw new BadRequestException('must provide the current password');
+      throw new BadRequestException(ERROR_MUST_PROVIDE_CURRENT_PASSWORD);
     }
 
     if (body.email) {
