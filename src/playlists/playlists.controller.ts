@@ -13,7 +13,7 @@ import {
 import { PlaylistsService } from './playlists.service';
 import { PATH_PLAYLISTS } from 'src/routes';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Playlist, User } from '@prisma/client';
+import { Music, Playlist, User } from '@prisma/client';
 import { CreatePlaylistDTO, UpdatePlaylistDTO } from './dtos';
 import { ERROR_MISSING_FIELDS } from 'src/errors/messages';
 
@@ -45,14 +45,7 @@ export class PlaylistsController {
   async update(
     @Param('id') id: string,
     @Body() body: UpdatePlaylistDTO,
-    @Req() { user },
   ): Promise<Playlist> {
-    const playlist = await this.playlistsService.findOne(Number(id));
-
-    if (playlist.userId != user.id) {
-      throw new UnauthorizedException();
-    }
-
     const updatedPlaylist = await this.playlistsService.update(
       Number(id),
       body,
