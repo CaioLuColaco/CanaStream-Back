@@ -65,7 +65,7 @@ export class UserController {
   async update(
     @Param('id') id: string,
     @Body() body: UpdateUserDTO,
-    @Req() { user },
+    @Req() { user }: Request & { user: User },
   ): Promise<User> {
     if (Number(id) !== user.id) {
       throw new ForbiddenException();
