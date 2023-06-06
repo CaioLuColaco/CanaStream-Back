@@ -27,6 +27,7 @@ export class PlaylistsController {
     @Body() body: CreatePlaylistDTO,
     @Req() { user }: Request & { user: User },
   ): Promise<Playlist> {
+    console.log("Entrou aqui")
     if (!body.name) {
       throw new BadRequestException(ERROR_MISSING_FIELDS);
     }

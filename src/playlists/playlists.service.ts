@@ -12,6 +12,7 @@ export class PlaylistsService {
     const { name, imgUrl } = data;
 
     try {
+      console.log("Entrou aqui")
       const musics =
         data?.musics?.length > 0
           ? { connect: data.musics.map((id) => ({ id })) }
