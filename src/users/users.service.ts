@@ -41,6 +41,13 @@ export class UserService {
     });
   }
 
+  async findById(id: number): Promise<User> {
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: userSelect,
+    });
+  }
+
   async update(id: number, data: UpdateUserDTO): Promise<User> {
     const { username, email, newPassword, currentPassword } = data;
     const updatedData = { username, email };
